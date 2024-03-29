@@ -23,13 +23,13 @@ const Pagination: React.FC<PaginationProps> = ({
     if (numberOfCharacters > 0) {
       setNumberOfPages(Math.ceil(numberOfCharacters / charactersPerPage));
     }
-  }, [numberOfCharacters]);
+  }, [numberOfCharacters, charactersPerPage]);
 
   return (
     <div>
       {numberOfPages > 0 && (
         <div className="flex justify-end">
-          {Array.from({ length: numberOfPages }).map((item, index) => {
+          {Array.from({ length: numberOfPages }).map((_, index) => {
             return (
               <div
                 key={`page-${index + 1}`}

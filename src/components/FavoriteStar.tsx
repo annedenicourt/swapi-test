@@ -8,22 +8,17 @@ interface FavoritesProps {
 }
 
 const FavoriteStar: React.FC<FavoritesProps> = ({ character, size }) => {
-  const storageString = localStorage.getItem("favorites");
-  const storage = storageString ? JSON.parse(storageString) : [];
-
+  const storage = JSON.parse(localStorage.getItem("favorites") || "[]");
   const [favorites, setFavorites] = useState<Character[]>(storage);
 
   const handleFavorites = (character: Character) => {
-    let newArray: Character[] = [];
-    const isInFavorites = favorites?.find(
+    const isInFavorites = favorites.find(
       (item) => item?.name === character?.name
     );
     if (isInFavorites === undefined) {
-      newArray = [...favorites, character];
-      setFavorites(newArray);
+      setFavorites([...favorites, character]);
     } else {
-      newArray = favorites.filter((item: any) => item.name !== character?.name);
-      setFavorites(newArray);
+      setFavorites(favorites.filter((item) => item.name !== character?.name));
     }
   };
 
@@ -32,12 +27,8 @@ const FavoriteStar: React.FC<FavoritesProps> = ({ character, size }) => {
   }, [favorites]);
 
   return (
-    <button
-      onClick={() => character && handleFavorites(character)}
-      className=""
-    >
-      {character?.name &&
-      favorites.find((item) => item?.name === character?.name) ? (
+    <button onClick={() => character && handleFavorites(character)}>
+      {character && favorites.find((item) => item?.name === character?.name) ? (
         <div title={"Retirer des favoris"}>
           <FaStar color={"orange"} size={size} />
         </div>

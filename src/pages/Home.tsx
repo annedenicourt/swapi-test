@@ -12,50 +12,45 @@ import { IoGrid, IoList } from "react-icons/io5";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const [allCharacters, setAllCharacters] = useState<Character[] | undefined>(
-    []
-  );
-  const [searchResult, setSearchResult] = useState<Character[] | undefined>([]);
-  const [results, setResults] = useState<Character[] | undefined>([]);
-  const [numberOfCharacters, setNumberOfCharacters] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [numberOfPages, setNumberOfPages] = useState(0);
+  const [allCharacters, setAllCharacters] = useState<Character[]>([]);
+  const [searchResult, setSearchResult] = useState<Character[]>([]);
+  const [results, setResults] = useState<Character[]>([]);
+  const [numberOfCharacters, setNumberOfCharacters] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [numberOfPages, setNumberOfPages] = useState<number>(0);
   const charactersPerPage = 10;
-  const [indexStart, setIndexStart] = useState(0);
-  const [indexEnd, setIndexEnd] = useState(charactersPerPage);
-  const [view, setView] = useState("card");
+  const [indexStart, setIndexStart] = useState<number>(0);
+  const [indexEnd, setIndexEnd] = useState<number>(charactersPerPage);
+  const [view, setView] = useState<string>("card");
 
   useEffect(() => {
-    getCharacters().then(async (response) => {
-      const results = await response.flat();
-      const newArray = [];
-      for (const result of results) {
-        if (result.films?.length > 0) {
-          const arrayFilms: Film[] = [];
-          for (const film of result.films) {
-            const detailsFilm = await getFilm(film).then((response) => {
-              return response?.data;
-            });
-            arrayFilms.push(detailsFilm);
-          }
-          result.films = arrayFilms;
+    const fetchData = async () => {
+      const charactersData = await getCharacters();
+      const charactersList: Character[] = [];
+      for (const character of charactersData) {
+        const filmsList: Film[] = [];
+        for (const film of character.films || []) {
+          const filmDetails = await getFilm(film);
+          filmsList.push(filmDetails?.data);
         }
-        newArray.push(result);
+        charactersList.push({ ...character, films: filmsList });
       }
-      setAllCharacters(newArray);
-    });
+      setAllCharacters(charactersList);
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
-    if (allCharacters && allCharacters.length > 0) {
+    if (allCharacters.length > 0) {
       setResults(allCharacters);
       dispatch(setFilteredResults(allCharacters));
       setNumberOfCharacters(allCharacters?.length);
     }
-  }, [allCharacters]);
+  }, [allCharacters, dispatch]);
 
   useEffect(() => {
-    if (searchResult && searchResult.length > 0) {
+    if (searchResult.length > 0) {
       setResults(searchResult);
       setNumberOfCharacters(searchResult?.length);
       dispatch(setFilteredResults(searchResult));
@@ -63,7 +58,7 @@ const Home = () => {
       setResults([]);
       setNumberOfCharacters(0);
     }
-  }, [searchResult]);
+  }, [searchResult, dispatch]);
 
   const getOnePage = (index: number) => {
     if (index === 0) {
@@ -125,6 +120,7 @@ const Home = () => {
           setIndexStart={setIndexStart}
           setIndexEnd={setIndexEnd}
           charactersPerPage={charactersPerPage}
+          setCurrentPage={setCurrentPage}
         />
         <div className="flex items-center justify-end">
           <div className="text-xs">Affichage</div>
@@ -147,7 +143,7 @@ const Home = () => {
             <IoList size={25} />
           </div>
         </div>
-        {results && results?.length > 0 ? (
+        {results?.length > 0 ? (
           displayByType()
         ) : (
           <div>

@@ -17,18 +17,24 @@ const CardCharacter: React.FC<CardCharacterProps> = ({ character }) => {
     }
   };
 
+  const handleClick = () => {
+    if (character && character.url) {
+      if (characterId) {
+        navigate(`/characters/${characterId}`);
+      }
+    }
+  };
+
+  const characterId = character?.url ? getId(character.url) : undefined;
+
   return (
     <div className="relative transform hover:scale-95 duration-75">
       <div
         className="pb-3 rounded-lg shadow-lg cursor-pointer"
-        onClick={() => {
-          navigate(`/characters/${getId(character?.url)}`);
-        }}
+        onClick={() => handleClick()}
       >
         <img
-          src={`https://starwars-visualguide.com/assets/img/characters/${getId(
-            character?.url
-          )}.jpg`}
+          src={`https://starwars-visualguide.com/assets/img/characters/${characterId}.jpg`}
           alt={`${character?.name}`}
           className="rounded-t-lg"
         />

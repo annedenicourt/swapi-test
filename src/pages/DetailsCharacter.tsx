@@ -14,35 +14,23 @@ const DetailsCharacter = () => {
   const state = useSelector((state: any) => state.results);
 
   const [characterDetails, setCharacterDetails] = useState<Character>();
-  const [currentId, setCurrentId] = useState(id);
-  const [previousCharacter, setPreviousCharacter] = useState<Character>({
-    name: "",
-    url: "",
-  });
-  const [nextCharacter, setNextCharacter] = useState<Character>({
-    name: "",
-    url: "",
-  });
+  const [currentId, setCurrentId] = useState<string | undefined>(id);
+  const [previousCharacter, setPreviousCharacter] = useState<
+    Character | undefined
+  >();
+  const [nextCharacter, setNextCharacter] = useState<Character | undefined>();
 
   useEffect(() => {
-    if (state?.length > 0) {
+    if (state?.length > 0 && currentId) {
       const findCurrent = state.find(
         (character: { url: string }) =>
           character.url === `https://swapi.py4e.com/api/people/${currentId}/`
       );
-      setCharacterDetails(findCurrent);
-      const index = findCurrent ? state.indexOf(findCurrent) : -1;
-      if (index > 0) {
-        setPreviousCharacter({
-          name: state[index - 1].name,
-          url: state[index - 1].url,
-        });
-      }
-      if (index <= state.length - 2) {
-        setNextCharacter({
-          name: state[index + 1].name,
-          url: state[index + 1].url,
-        });
+      if (findCurrent) {
+        setCharacterDetails(findCurrent);
+        const index = state.indexOf(findCurrent);
+        if (index > 0) setPreviousCharacter(state[index - 1]);
+        if (index < state.length - 1) setNextCharacter(state[index + 1]);
       }
     }
   }, [state, currentId]);
@@ -57,13 +45,20 @@ const DetailsCharacter = () => {
 
   const isLocked = (type: string) => {
     let result = false;
-    if (type === "previous" && typeof id === "string") {
+    if (type === "previous") {
       if (getId(state[0].url) === id) result = true;
     }
-    if (type === "next" && typeof id === "string") {
+    if (type === "next") {
       if (getId(state[state?.length - 1].url) === id) result = true;
     }
     return result;
+  };
+
+  const handleNavigation = (id: string | undefined) => {
+    if (id) {
+      setCurrentId(id);
+      navigate(`/characters/${id}`, { replace: true });
+    }
   };
 
   return (
@@ -170,14 +165,7 @@ const DetailsCharacter = () => {
                 className={`text-center ${
                   isLocked("previous") ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
-                onClick={() => {
-                  if (!isLocked("previous") && previousCharacter) {
-                    setCurrentId(getId(previousCharacter.url));
-                    navigate(`/characters/${getId(previousCharacter.url)}`, {
-                      replace: true,
-                    });
-                  }
-                }}
+                onClick={() => handleNavigation(getId(previousCharacter?.url))}
               >
                 <div
                   className={`flex items-center justify-start ${
@@ -193,14 +181,7 @@ const DetailsCharacter = () => {
                 className={`text-center ${
                   isLocked("next") ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
-                onClick={() => {
-                  if (!isLocked("next") && nextCharacter) {
-                    setCurrentId(getId(nextCharacter.url));
-                    navigate(`/characters/${getId(nextCharacter.url)}`, {
-                      replace: true,
-                    });
-                  }
-                }}
+                onClick={() => handleNavigation(getId(nextCharacter?.url))}
               >
                 <div
                   className={`flex items-center justify-end ${

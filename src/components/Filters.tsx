@@ -16,14 +16,15 @@ const CustomDiv = styled.div`
 
 interface FiltersProps {
   numberOfCharacters: number;
-  setNumberOfCharacters: (option: number) => void;
-  setNumberOfPages: (option: number) => void;
-  setAllCharacters: (option: Character[] | undefined) => void;
-  allCharacters: Character[] | undefined;
-  setSearchResult: (option: Character[] | undefined) => void;
+  setNumberOfCharacters: React.Dispatch<React.SetStateAction<number>>;
+  setNumberOfPages: React.Dispatch<React.SetStateAction<number>>;
+  setAllCharacters: React.Dispatch<React.SetStateAction<Character[]>>;
+  allCharacters: Character[];
+  setSearchResult: React.Dispatch<React.SetStateAction<Character[]>>;
   setIndexStart: React.Dispatch<React.SetStateAction<number>>;
   setIndexEnd: React.Dispatch<React.SetStateAction<number>>;
   charactersPerPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const Filters: React.FC<FiltersProps> = ({
@@ -35,6 +36,7 @@ const Filters: React.FC<FiltersProps> = ({
   allCharacters,
   setSearchResult,
   charactersPerPage,
+  setCurrentPage,
 }) => {
   const { register, reset } = useForm();
   const [allFilms, setAllFilms] = useState<Film[]>([]);
@@ -52,23 +54,28 @@ const Filters: React.FC<FiltersProps> = ({
 
   useEffect(() => {
     let filteredArray = allCharacters;
-    if (filteredArray) {
-      if (searchQuery !== "") {
-        filteredArray = filterByName(filteredArray);
-      }
-      if (filterByHeight !== "") {
-        filteredArray = filterSelectedHeight(filteredArray);
-      }
-      if (filterByWeight !== "") {
-        filteredArray = filterSelectedWeight(filteredArray);
-      }
-      if (filterByFilm !== "") {
-        filteredArray = filterSelectedFilm(filteredArray);
-      }
-      setSearchResult(filteredArray);
-      setNumberOfCharacters(filteredArray?.length);
+
+    if (searchQuery !== "") {
+      filteredArray = filterByName(filteredArray);
     }
+    if (filterByHeight !== "") {
+      filteredArray = filterSelectedHeight(filteredArray);
+    }
+    if (filterByWeight !== "") {
+      filteredArray = filterSelectedWeight(filteredArray);
+    }
+    if (filterByFilm !== "") {
+      filteredArray = filterSelectedFilm(filteredArray);
+    }
+    setSearchResult(filteredArray);
+    setNumberOfCharacters(filteredArray?.length);
   }, [searchQuery, filterByFilm, filterByHeight, filterByWeight]);
+
+  useEffect(() => {
+    if (numberOfCharacters > 0) {
+      setNumberOfPages(Math.ceil(numberOfCharacters / 10));
+    }
+  }, [numberOfCharacters]);
 
   const filterByName = (array: any[]) => {
     const search = array?.filter((character) =>
@@ -117,11 +124,13 @@ const Filters: React.FC<FiltersProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (numberOfCharacters > 0) {
-      setNumberOfPages(Math.ceil(numberOfCharacters / 10));
-    }
-  }, [numberOfCharacters]);
+  const handleReset = () => {
+    reset();
+    setIndexStart(0);
+    setIndexEnd(charactersPerPage);
+    setSearchResult(allCharacters);
+    setCurrentPage(1);
+  };
 
   return (
     <CustomDiv>
@@ -167,12 +176,7 @@ const Filters: React.FC<FiltersProps> = ({
             <option value="fat">Plus de 100kg</option>
           </select>
           <div
-            onClick={() => {
-              reset();
-              setIndexStart(0);
-              setIndexEnd(charactersPerPage);
-              setSearchResult(allCharacters);
-            }}
+            onClick={() => handleReset()}
             className="ml-2 text-sm hover:underline cursor-pointer"
           >
             Réinitialiser

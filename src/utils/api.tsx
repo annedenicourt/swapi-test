@@ -1,48 +1,51 @@
 import axios from "axios";
 
 export const getCharacters = async () => {
-  const myArrayResults: any[] = [];
-  let url = "https://swapi.py4e.com/api/people/";
-  await axios({
-    method: "GET",
-    url: `${url}`,
-  }).then(async (response) => {
+  try {
+    const myArrayResults: any[] = [];
+    let url = "https://swapi.py4e.com/api/people/";
+    const response = await axios.get(url);
     const { count, results } = response.data;
     const pageLength = results.length;
     if (count === 0) return [];
-    myArrayResults.push(results);
+    myArrayResults.push(...results);
+
     await Promise.all(
       Array.from({ length: Math.ceil(count / pageLength) }).map(
-        async (n, index: number) => {
+        async (_, index: number) => {
           if (index >= 1) {
-            await axios({
-              method: "GET",
-              url: `${url}?page=${index + 1}`,
-            }).then((response) => {
-              myArrayResults.push(response.data.results);
-            });
+            const response = await axios.get(`${url}?page=${index + 1}`);
+            myArrayResults.push(...response.data.results);
           }
         }
       )
     );
-  });
-  return myArrayResults;
+    return myArrayResults;
+  } catch (error) {
+    console.error("Error fetching characters:", error);
+    return [];
+  }
 };
 
 export const getAllFilms = async () => {
-  const request = await axios({
-    method: "GET",
-    url: "https://swapi.py4e.com/api/films/",
-  });
-  return request;
+  try {
+    const response = await axios.get("https://swapi.py4e.com/api/films/");
+    return response;
+  } catch (error) {
+    console.error("Error fetching films:", error);
+    return null;
+  }
 };
 
 export const getFilm = async (url: string | undefined) => {
-  if (typeof url === "string") {
-    const request = await axios({
-      method: "GET",
-      url,
-    });
-    return request;
+  try {
+    if (typeof url === "string") {
+      const response = await axios.get(url);
+      return response;
+    }
+    throw new Error("Invalid URL");
+  } catch (error) {
+    console.error("Error fetching film:", error);
+    return null;
   }
 };

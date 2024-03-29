@@ -16,17 +16,17 @@ const ListCharacter: React.FC<ListCharacterProps> = ({ character }) => {
       const characterId = splitedUrl[splitedUrl.length - 2];
       return characterId;
     }
+    return undefined;
   };
+  const characterId = character?.url ? getId(character.url) : undefined;
 
   return (
     <div className="">
       <div className="py-1 flex items-center text-center border-b border-dashed cursor-pointer">
         <div className="w-1/6 flex justify-center">
           <img
-            src={`https://starwars-visualguide.com/assets/img/characters/${getId(
-              character?.url
-            )}.jpg`}
-            alt={`${character?.name}`}
+            src={`https://starwars-visualguide.com/assets/img/characters/${characterId}.jpg`}
+            alt={character?.name || ""}
             className="w-16 h-16 mr-3 rounded-lg object-cover"
           />
         </div>
@@ -46,9 +46,9 @@ const ListCharacter: React.FC<ListCharacterProps> = ({ character }) => {
           <FaEye
             size={20}
             title="Voir les détails"
-            onClick={() => {
-              navigate(`/characters/${getId(character?.url)}`);
-            }}
+            onClick={() =>
+              characterId && navigate(`/characters/${characterId}`)
+            }
             className="mr-2"
           />
           <FavoriteStar character={character} size={20} />
