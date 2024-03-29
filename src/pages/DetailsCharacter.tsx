@@ -104,13 +104,17 @@ const DetailsCharacter = () => {
                 <div className="mb-3">
                   Poids :{" "}
                   <span className="font-semibold text-lg">
-                    {characterDetails?.mass} kg
+                    {characterDetails?.mass !== "unknown"
+                      ? `${characterDetails?.mass} kg`
+                      : "Non renseigné"}
                   </span>
                 </div>
                 <div className="mb-3">
                   Taille :{" "}
                   <span className="font-semibold text-lg">
-                    {characterDetails?.height} cm
+                    {characterDetails?.height !== "unknown"
+                      ? `${characterDetails?.height} cm`
+                      : "Non renseigné"}
                   </span>
                 </div>
                 <div className="mb-3">
