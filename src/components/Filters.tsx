@@ -1,11 +1,8 @@
-import { useEffect, useReducer, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Character, Film } from "../utils/types";
-import { getAllFilms, getCharacters, getResultByQuery } from "../utils/api";
-import Pagination from "../components/Pagination";
-import { FieldValues, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { getAllFilms } from "../utils/api";
+import { useForm } from "react-hook-form";
 
 const CustomDiv = styled.div`
   margin: 30px 20px;
@@ -39,11 +36,8 @@ const Filters: React.FC<FiltersProps> = ({
   setSearchResult,
   charactersPerPage,
 }) => {
-  const dispatch = useDispatch();
   const { register, reset } = useForm();
-
   const [allFilms, setAllFilms] = useState<Film[]>([]);
-
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filterByFilm, setFilterByFilm] = useState<string>("");
   const [filterByHeight, setFilterByHeight] = useState<string>("");
@@ -113,9 +107,9 @@ const Filters: React.FC<FiltersProps> = ({
     if (filterByFilm !== "") {
       return array?.filter(
         (character) =>
-          character.films && // Checking if 'films' property exists for the character
+          character.films &&
           character.films.some((film: { url: string }) => {
-            return film?.url === filterByFilm; // Checking if any film's URL matches 'filterByFilm'
+            return film?.url === filterByFilm;
           })
       );
     } else {
@@ -129,7 +123,6 @@ const Filters: React.FC<FiltersProps> = ({
     }
   }, [numberOfCharacters]);
 
-  //console.log("filteredCharacters", filteredCharacters);
   return (
     <CustomDiv>
       <form className="flex items-center justify-between">

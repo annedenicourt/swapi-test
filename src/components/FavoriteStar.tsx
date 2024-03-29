@@ -1,7 +1,5 @@
 import { Character } from "../utils/types";
 import { FaRegStar, FaStar } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-//import { setFavorites } from "../utils/reducers";
 import { useEffect, useState } from "react";
 
 interface FavoritesProps {
@@ -20,7 +18,6 @@ const FavoriteStar: React.FC<FavoritesProps> = ({ character, size }) => {
     const isInFavorites = favorites?.find(
       (item) => item?.name === character?.name
     );
-    console.log("isInFavorites", isInFavorites);
     if (isInFavorites === undefined) {
       newArray = [...favorites, character];
       setFavorites(newArray);
@@ -34,11 +31,8 @@ const FavoriteStar: React.FC<FavoritesProps> = ({ character, size }) => {
     localStorage.setItem("favorites", JSON.stringify(favorites));
   }, [favorites]);
 
-  //console.log("favorites", favorites);
-
   return (
     <button
-      //onClick={() => dispatch(setFavorites(character?.name))}
       onClick={() => character && handleFavorites(character)}
       className=""
     >

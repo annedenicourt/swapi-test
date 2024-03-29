@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import styled from "styled-components";
-import { Character, Film } from "../utils/types";
-import { getDetails, getNext, getPrevious, getFilm } from "../utils/api";
+import { useNavigate, useParams } from "react-router-dom";
+import { Character } from "../utils/types";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import moment from "moment";
 import FavoriteStar from "../components/FavoriteStar";
@@ -27,38 +25,13 @@ const DetailsCharacter = () => {
   });
 
   useEffect(() => {
-    if (typeof id === "string") {
-      /* if (parseInt(id) > 1) {
-        getPrevious(id).then(async (response) => {
-          const previous = await response?.data;
-          setPreviousCharacter({
-            name: previous?.name,
-            url: previous?.url,
-          });
-        });
-      }
-      if (parseInt(id) < 88) {
-        getNext(id).then(async (response) => {
-          const next = await response?.data;
-          setNextCharacter({
-            name: next?.name,
-            url: next?.url,
-          });
-        });
-      } */
-    }
-  }, [id]);
-
-  useEffect(() => {
     if (state?.length > 0) {
       const findCurrent = state.find(
         (character: { url: string }) =>
           character.url === `https://swapi.py4e.com/api/people/${currentId}/`
       );
-      //console.log(findCurrent);
       setCharacterDetails(findCurrent);
       const index = findCurrent ? state.indexOf(findCurrent) : -1;
-      //console.log(index);
       if (index > 0) {
         setPreviousCharacter({
           name: state[index - 1].name,
@@ -93,7 +66,6 @@ const DetailsCharacter = () => {
     return result;
   };
 
-  //console.log("state", state);
   return (
     <div>
       <Header />
@@ -137,13 +109,13 @@ const DetailsCharacter = () => {
                 <div className="mb-3">
                   Poids :{" "}
                   <span className="font-semibold text-lg">
-                    {characterDetails?.mass}
+                    {characterDetails?.mass} kg
                   </span>
                 </div>
                 <div className="mb-3">
                   Taille :{" "}
                   <span className="font-semibold text-lg">
-                    {characterDetails?.height}
+                    {characterDetails?.height} cm
                   </span>
                 </div>
                 <div className="mb-3">
@@ -208,7 +180,7 @@ const DetailsCharacter = () => {
                 }}
               >
                 <div
-                  className={`flex items-center justify-between ${
+                  className={`flex items-center justify-start ${
                     isLocked("previous") && "text-slate-400"
                   }`}
                 >
@@ -231,7 +203,7 @@ const DetailsCharacter = () => {
                 }}
               >
                 <div
-                  className={`flex items-center justify-between ${
+                  className={`flex items-center justify-end ${
                     isLocked("next") && "text-slate-400"
                   } text-end`}
                 >

@@ -5,8 +5,7 @@ const resultSlice = createSlice({
   initialState: [] as string[],
   reducers: {
     setFilteredResults: (state, { payload }) => {
-      console.log("payload", payload);
-      return [...state, payload];
+      return payload;
     },
   },
 });

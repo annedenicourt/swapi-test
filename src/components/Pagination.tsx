@@ -24,6 +24,7 @@ const Pagination: React.FC<PaginationProps> = ({
       setNumberOfPages(Math.ceil(numberOfCharacters / charactersPerPage));
     }
   }, [numberOfCharacters]);
+
   return (
     <div>
       {numberOfPages > 0 && (

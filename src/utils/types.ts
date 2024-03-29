@@ -1,5 +1,5 @@
 export type Character = {
-  name: string | undefined;
+  name?: string | undefined;
   mass?: string;
   height?: string | undefined;
   hair_color?: string;
